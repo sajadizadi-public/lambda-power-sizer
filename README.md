@@ -19,7 +19,7 @@ npm install
 
 2. Deploy the stack:
 ```console
-cdk deploy
+cdk deploy --all
 ```
 
 3. Invoke the test using the Function URL provided in the CDK output.
@@ -28,8 +28,9 @@ cdk deploy
 
 The benchmark performs three CPU-intensive tasks:
 1. Prime number calculation
-2. Fibonacci sequence calculation
-3. Matrix multiplication
+2. Matrix multiplication
+3. Pi calculation
+4. SHA256 calculation
 
 These tasks run for 10 seconds on Lambda functions with memory allocations ranging from 256MB to 10240MB.
 
@@ -39,8 +40,9 @@ The output includes:
 - `memorySize`: Allocated memory in MB
 - `executionTime`: Actual execution time (should be close to 10 seconds)
 - `primeCount`: Number of prime numbers found
-- `fibonacciSum`: Sum of Fibonacci calculations (Note: This is not a count, but a sum)
 - `matrixOperations`: Number of matrix multiplications performed
+- `piCalculations`: Number of Pi calculations  performed
+- `hashOperations`: Number of SHA256 hash operations performed
 - `totalOperations`: Sum of all operations
 - `operationsPerMB`: Total operations divided by memory size
 

@@ -10,15 +10,15 @@ async function getParameter(name) {
   return response.Parameter.Value;
 }
 
-exports.handler = async (event) => {
+exports.handler = async () => {
   // Get the list of memory sizes
   const memorySizes = (await getParameter('/lambda-cpu-test/memory-sizes')).split(',');
   const results = [];
 
-  for (const memorySize of memorySizes) {
-    // Get the function ARN for this memory size
+  await Promise.all(memorySizes.map(async (memorySize) => {
     const arnParameterName = `/lambda-cpu-test/function-arn-${memorySize}`;
     const arn = await getParameter(arnParameterName);
+    console.log(`Invoking function with ${memorySize}MB:`, arn);
 
     try {
       const command = new InvokeCommand({
@@ -34,7 +34,8 @@ exports.handler = async (event) => {
     } catch (error) {
       console.error(`Error invoking function with ${memorySize}MB:`, error);
     }
-  }
+
+  }));
 
   // Sort results by memory size
   results.sort((a, b) => parseInt(a.memorySize) - parseInt(b.memorySize));

@@ -1,12 +1,7 @@
 function isPrime(num) {
-    for(let i = 2, s = Math.sqrt(num); i <= s; i++)
-        if(num % i === 0) return false; 
+    for (let i = 2, s = Math.sqrt(num); i <= s; i++)
+        if (num % i === 0) return false;
     return num > 1;
-}
-
-function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
 function matrixMultiplication(size) {
@@ -24,12 +19,33 @@ function matrixMultiplication(size) {
     return result;
 }
 
+function calculatePi(iterations) {
+    let pi = 0;
+    let sign = 1;
+    for (let i = 0; i < iterations; i++) {
+        pi += sign / (2 * i + 1);
+        sign *= -1;
+    }
+    return 4 * pi;
+}
+
+function sha256(input) {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+        const char = input.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash);
+}
+
 exports.handler = async (event) => {
     const startTime = Date.now();
     const duration = 10000; // 10 seconds
     let primeCount = 0;
-    let fibonacciCount = 0;
-    let matrixOps = 0;
+    let matrixOperations = 0;
+    let piCalculations = 0;
+    let hashOperations = 0;
     let number = 2;
 
     while (Date.now() - startTime < duration) {
@@ -39,28 +55,33 @@ exports.handler = async (event) => {
         }
         number++;
 
-        // Fibonacci calculation
-        fibonacci(20);
-        fibonacciCount++;
-
         // Matrix multiplication
         matrixMultiplication(50);
-        matrixOps++;
+        matrixOperations++;
+
+        // Pi calculation
+        calculatePi(10000);
+        piCalculations++;
+
+        // Hash calculation (simulating SHA-256)
+        sha256("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        hashOperations++;
     }
 
-    const totalOps = primeCount + fibonacciCount + matrixOps;
+    const totalOperations = primeCount + matrixOperations + piCalculations + hashOperations;
     const memorySize = parseInt(process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE);
 
     return {
         statusCode: 200,
         body: JSON.stringify({
-            memorySize: memorySize,
+            memorySize,
             executionTime: Date.now() - startTime,
-            primeCount: primeCount,
-            fibonacciCount: fibonacciCount,
-            matrixOperations: matrixOps,
-            totalOperations: totalOps,
-            operationsPerMB: totalOps / memorySize
+            primeCount,
+            matrixOperations,
+            piCalculations,
+            hashOperations,
+            totalOperations,
+            operationsPerMB: totalOperations / memorySize
         }),
     };
 };
